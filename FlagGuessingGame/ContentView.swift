@@ -40,6 +40,8 @@ struct FlagImage: View{
 
 struct ContentView: View {
     
+    @State private var rotationAmount = [0.0, 0.0, 0.0]
+    
     @State private var showingScore = false
     @State private var scoreTitle = ""
     @State private var score = 0
@@ -71,12 +73,18 @@ struct ContentView: View {
                 ForEach(0..<3){ number in
                     Button{
                         flagTapped(number)
+                        withAnimation {
+                            rotationAmount[number] += 360
+                        }
+                        
                     } label: {
-                        FlagImage(name: countries[number])
+                        FlagImage(name: countries[number]).rotation3DEffect(.degrees(rotationAmount[number]), axis: (x: 0, y: 1, z: 0))
 //                        Image(countries[number])
 //                            .renderingMode(.original).clipShape(Capsule()).shadow(radius: 5)
                     }
-                }
+                    
+                 }
+
             }
         }.alert(scoreTitle, isPresented: $showingScore){
             Button("continue", action: askQuestion)
