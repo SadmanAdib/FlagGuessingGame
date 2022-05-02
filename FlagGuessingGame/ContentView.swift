@@ -9,7 +9,6 @@ import SwiftUI
 
 //creating custom ViewModifier with View extension for a title
 struct Title: ViewModifier{
-    
     func body(content: Content) -> some View {
         content
             .font(.largeTitle)
@@ -31,7 +30,6 @@ extension View{
 //for replacing Image view with FlagImage view
 struct FlagImage: View{
     var name: String
-    
     var body: some View{
         Image(name)
             .renderingMode(.original).clipShape(Capsule()).shadow(radius: 5)
@@ -41,6 +39,7 @@ struct FlagImage: View{
 struct ContentView: View {
     
     @State private var rotationAmount = [0.0, 0.0, 0.0]
+    @State private var opacityAmount = [1.0, 1.0, 1.0]
     
     @State private var showingScore = false
     @State private var scoreTitle = ""
@@ -51,6 +50,9 @@ struct ContentView: View {
     
     @State private var countries = ["afghanistan", "albania", "algeria", "andorra", "angola", "antigua", "argentina", "bahamas", "bahrain", "bangladesh"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
+    
+    @State private var animateOpacity = false
+    @State private var tappedNumber = 0
     
     var body: some View {
         
@@ -76,9 +78,12 @@ struct ContentView: View {
                         withAnimation {
                             rotationAmount[number] += 360
                         }
-                        
+                      
                     } label: {
-                        FlagImage(name: countries[number]).rotation3DEffect(.degrees(rotationAmount[number]), axis: (x: 0, y: 1, z: 0))
+                        FlagImage(name: countries[number])
+                            .rotation3DEffect(.degrees(rotationAmount[number]), axis: (x: 0, y: 1, z: 0))
+                            .opacity(animateOpacity ? (number == tappedNumber ? 1 : 0.25) : 1)
+                        
 //                        Image(countries[number])
 //                            .renderingMode(.original).clipShape(Capsule()).shadow(radius: 5)
                     }
@@ -107,11 +112,13 @@ struct ContentView: View {
         questionNumber = 0
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        animateOpacity = false
     }
     
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        animateOpacity = false
     }
     
     func flagTapped(_ number : Int) {
@@ -130,8 +137,9 @@ struct ContentView: View {
             showFinalScore = true
         }
         
+        tappedNumber = number
         questionNumber+=1
-        
+        animateOpacity = true
     }
 }
 
