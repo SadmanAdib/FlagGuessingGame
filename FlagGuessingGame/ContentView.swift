@@ -51,7 +51,7 @@ struct ContentView: View {
     @State private var countries = ["afghanistan", "albania", "algeria", "andorra", "angola", "antigua", "argentina", "bahamas", "bahrain", "bangladesh"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
     
-    @State private var animateOpacity = false
+    @State private var animate = false
     @State private var tappedNumber = 0
     
     var body: some View {
@@ -82,13 +82,14 @@ struct ContentView: View {
                     } label: {
                         FlagImage(name: countries[number])
                             .rotation3DEffect(.degrees(rotationAmount[number]), axis: (x: 0, y: 1, z: 0))
-                            .opacity(animateOpacity ? (number == tappedNumber ? 1 : 0.25) : 1)
-                        
+                            .opacity(animate ? (number == tappedNumber ? 1 : 0.25) : 1)
+                            .scaleEffect(animate ? (number == tappedNumber ? 1 : 0.5) : 1)
+                            .animation(.default, value: animate)
 //                        Image(countries[number])
 //                            .renderingMode(.original).clipShape(Capsule()).shadow(radius: 5)
                     }
                     
-                 }
+                }
 
             }
         }.alert(scoreTitle, isPresented: $showingScore){
@@ -112,13 +113,13 @@ struct ContentView: View {
         questionNumber = 0
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
-        animateOpacity = false
+        animate = false
     }
     
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
-        animateOpacity = false
+        animate = false
     }
     
     func flagTapped(_ number : Int) {
@@ -139,7 +140,7 @@ struct ContentView: View {
         
         tappedNumber = number
         questionNumber+=1
-        animateOpacity = true
+        animate = true
     }
 }
 
